@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
@@ -7,7 +7,7 @@ import { IoMail, IoLockClosed, IoPerson } from 'react-icons/io5';
 import Layout from '../../components/layout/Layout';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
-import { registerUser, clearError, logout } from '../../store/slices/authSlice';
+import { registerUser, clearError } from '../../store/slices/authSlice';
 
 const Signup = () => {
   const [form, setForm] = useState({ name: '', email: '', password: '', role: 'user', phone: '' });
@@ -15,14 +15,20 @@ const Signup = () => {
   const navigate = useNavigate();
   const { loading, error } = useSelector((state) => state.auth);
 
+  useEffect(() => {
+    dispatch(clearError());
+  }, [dispatch]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     dispatch(clearError());
     const result = await dispatch(registerUser(form));
     if (registerUser.fulfilled.match(result)) {
-      toast.success('Account created successfully! Please log in.');
-      dispatch(logout());
-      navigate('/login');
+      toast.success('Account created successfully!');
+      const role = result.payload.user.role;
+      if (role === 'admin') navigate('/admin');
+      else if (role === 'restaurant') navigate('/restaurant/dashboard');
+      else navigate('/');
     } else {
       toast.error(result.payload || 'Registration failed');
     }

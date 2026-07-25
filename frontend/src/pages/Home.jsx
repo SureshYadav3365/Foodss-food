@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -12,7 +12,8 @@ import {
   IoChevronDown,
   IoMailOutline,
   IoPhonePortraitOutline,
-  IoQrCodeOutline
+  IoQrCodeOutline,
+  IoClose
 } from 'react-icons/io5';
 import toast from 'react-hot-toast';
 import Layout from '../components/layout/Layout';
@@ -21,8 +22,33 @@ import CategorySection from '../components/home/CategorySection';
 
 const Counter = ({ target, suffix = '', duration = 1500 }) => {
   const [count, setCount] = useState(0);
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const ref = useRef(null);
 
   useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasAnimated) {
+          setHasAnimated(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current);
+      }
+    };
+  }, [hasAnimated]);
+
+  useEffect(() => {
+    if (!hasAnimated) return;
+
     const isDecimal = target.includes('.');
     const end = parseFloat(target.replace(/,/g, '')) || 0;
     if (end === 0) {
@@ -47,14 +73,18 @@ const Counter = ({ target, suffix = '', duration = 1500 }) => {
     }, duration / steps);
 
     return () => clearInterval(timer);
-  }, [target, duration]);
+  }, [target, duration, hasAnimated]);
 
   const formatNum = (num) => {
     if (typeof num === 'string') return num;
+    const isDecimal = target.includes('.');
+    if (isDecimal) {
+      return num.toFixed(1);
+    }
     return num.toLocaleString();
   };
 
-  return <span>{formatNum(count)}{suffix}</span>;
+  return <span ref={ref}>{formatNum(count)}{suffix}</span>;
 };
 import RestaurantCard from '../components/restaurant/RestaurantCard';
 import FoodCard from '../components/food/FoodCard';
@@ -76,6 +106,47 @@ const Home = () => {
 
   // Email state for Newsletter
   const [email, setEmail] = useState('');
+
+  // Mobile App Download States & Refs
+  const [showQRModal, setShowQRModal] = useState(false);
+  const [showVideoModal, setShowVideoModal] = useState(false);
+  const [videoError, setVideoError] = useState(false);
+  const [videoPlaying, setVideoPlaying] = useState(false);
+  const [autoplayBlocked, setAutoplayBlocked] = useState(false);
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    if (showVideoModal && videoRef.current) {
+      setVideoError(false);
+      setAutoplayBlocked(false);
+      setVideoPlaying(false);
+
+      const playPromise = videoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            setVideoPlaying(true);
+          })
+          .catch((error) => {
+            console.log("Autoplay was prevented by browser:", error);
+            setAutoplayBlocked(true);
+          });
+      }
+    }
+  }, [showVideoModal]);
+
+  const handleCompatibleClick = () => {
+    setShowVideoModal(true);
+    if (videoRef.current) {
+      videoRef.current.play().catch((err) => {
+        console.log("Play failed:", err);
+      });
+    }
+  };
+
+  const handleGooglePlayClick = () => {
+    toast.success('Thank you so much! App downloading will begin shortly.');
+  };
 
   const handleSubscribe = (e) => {
     e.preventDefault();
@@ -382,9 +453,9 @@ const Home = () => {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
           {[
-            { value: '15000', suffix: '+', label: 'Delivered Orders', duration: 1000 },
+            { value: '15000', suffix: '+', label: 'Delivered Orders', duration: 2000 },
             { value: '10', suffix: '+', label: 'Premium Brands', duration: 2500 },
-            { value: '12000', suffix: '+', label: 'Happy Customers', duration: 1200 },
+            { value: '12000', suffix: '+', label: 'Happy Customers', duration: 2200 },
             { value: '4.9', suffix: '★', label: 'App Store Rating', duration: 2000 }
           ].map((stat, i) => (
             <motion.div
@@ -423,27 +494,36 @@ const Home = () => {
               </p>
               
               <div className="grid sm:grid-cols-2 gap-6 mb-8 max-w-md">
-                <div className="flex items-center gap-3 bg-slate-800/40 border border-slate-700/40 p-3.5 rounded-xl">
+                <button
+                  onClick={() => setShowQRModal(true)}
+                  className="flex items-center text-left w-full gap-3 bg-slate-800/40 border border-slate-700/40 p-3.5 rounded-xl cursor-pointer hover:bg-slate-800/70 hover:border-slate-600/50 transition-all duration-200 active:scale-[0.98] outline-none"
+                >
                   <IoQrCodeOutline className="w-10 h-10 text-primary-400 flex-shrink-0" />
                   <div>
                     <p className="text-xs font-bold text-slate-200">Scan QR Code</p>
                     <p className="text-[10px] text-slate-400 mt-0.5">Instant Mobile Link</p>
                   </div>
-                </div>
-                <div className="flex items-center gap-3 bg-slate-800/40 border border-slate-700/40 p-3.5 rounded-xl">
+                </button>
+                <button
+                  onClick={handleCompatibleClick}
+                  className="flex items-center text-left w-full gap-3 bg-slate-800/40 border border-slate-700/40 p-3.5 rounded-xl cursor-pointer hover:bg-slate-800/70 hover:border-slate-600/50 transition-all duration-200 active:scale-[0.98] outline-none"
+                >
                   <IoPhonePortraitOutline className="w-10 h-10 text-amber-400 flex-shrink-0" />
                   <div>
                     <p className="text-xs font-bold text-slate-200">Compatible</p>
                     <p className="text-[10px] text-slate-400 mt-0.5">iOS & Android</p>
                   </div>
-                </div>
+                </button>
               </div>
 
               <div className="flex flex-wrap gap-4">
                 <button className="bg-white hover:bg-slate-100 text-slate-900 font-extrabold px-6 py-3 rounded-xl transition-all duration-200 text-sm shadow-md active:scale-98">
                   Download on App Store
                 </button>
-                <button className="bg-slate-800 hover:bg-slate-700 text-white font-extrabold px-6 py-3 rounded-xl transition-all duration-200 text-sm border border-slate-700 active:scale-98">
+                <button
+                  onClick={handleGooglePlayClick}
+                  className="bg-slate-800 hover:bg-slate-700 text-white font-extrabold px-6 py-3 rounded-xl transition-all duration-200 text-sm border border-slate-700 active:scale-98"
+                >
                   Get it on Google Play
                 </button>
               </div>
@@ -582,6 +662,110 @@ const Home = () => {
           })}
         </div>
       </section>
+
+      {/* 17. Modals for Mobile App Download Actions */}
+      <AnimatePresence>
+        {showQRModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-slate-900 border border-slate-800 rounded-3xl p-8 max-w-sm w-full relative text-center text-white shadow-2xl"
+            >
+              <button
+                onClick={() => setShowQRModal(false)}
+                className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors"
+                title="Close"
+              >
+                <IoClose className="w-6 h-6" />
+              </button>
+              <div className="bg-white p-4 rounded-2xl inline-block mb-4 shadow-inner">
+                <img src="/qr_code.png" alt="App QR Code" className="w-48 h-48 object-contain" />
+              </div>
+              <p className="text-sm text-slate-300 font-semibold px-4 leading-relaxed">
+                Scan with your phone camera to download the app
+              </p>
+            </motion.div>
+          </div>
+        )}
+
+        {showVideoModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="max-w-xl w-full rounded-2xl overflow-hidden shadow-2xl border border-slate-800 relative bg-slate-950 min-h-[200px] flex items-center justify-center"
+            >
+              <button
+                onClick={() => setShowVideoModal(false)}
+                className="absolute top-4 right-4 z-10 text-white/85 hover:text-white bg-black/40 hover:bg-black/60 p-1.5 rounded-full transition-colors"
+                title="Close"
+              >
+                <IoClose className="w-5 h-5" />
+              </button>
+
+              {videoError ? (
+                <div className="w-full aspect-video bg-slate-900 flex flex-col items-center justify-center text-center p-6 text-white relative">
+                  <img
+                    src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM2I1ZmY3YjA5ZGU3NmVjNjg4NTllOWM2YTM4YzM5NmQ2ZDA4NmVlNSZlcD12MV9pbnRlcm5hbF9naWZzX2dpZklkJmN0PWc/L1R1TvI9svvvnGlOPY/giphy.gif"
+                    alt="Delivery rider animation fallback"
+                    className="absolute inset-0 w-full h-full object-cover opacity-60"
+                  />
+                  <div className="relative z-10 bg-slate-950/80 backdrop-blur-md p-4 rounded-2xl border border-slate-800">
+                    <p className="text-sm font-bold text-slate-200">
+                      Video Playback Failed
+                    </p>
+                    <p className="text-xs text-slate-400 mt-1">
+                      Showing animated fallback instead.
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="relative w-full aspect-video">
+                  <video
+                    ref={videoRef}
+                    src="https://assets.mixkit.co/videos/preview/mixkit-delivery-man-riding-a-motorcycle-41584-large.mp4"
+                    autoPlay
+                    playsInline
+                    muted
+                    loop={false}
+                    onError={() => setVideoError(true)}
+                    onEnded={() => setShowVideoModal(false)}
+                    onTimeUpdate={(e) => {
+                      if (e.target.currentTime >= 4) {
+                        setShowVideoModal(false);
+                      }
+                    }}
+                    className="w-full h-full object-cover"
+                  />
+
+                  {autoplayBlocked && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/60 z-20 backdrop-blur-xs">
+                      <button
+                        onClick={() => {
+                          if (videoRef.current) {
+                            videoRef.current.play()
+                              .then(() => {
+                                setAutoplayBlocked(false);
+                                setVideoPlaying(true);
+                              })
+                              .catch((err) => console.log("Play failed again:", err));
+                          }
+                        }}
+                        className="bg-primary-600 hover:bg-primary-700 text-white font-extrabold py-3 px-6 rounded-full flex items-center gap-2 shadow-lg transition-all duration-200 active:scale-95 text-sm"
+                      >
+                        ▶ Play Video
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </Layout>
   );
 };

@@ -19,7 +19,7 @@ import { HiLocationMarker } from 'react-icons/hi';
 import { logout } from '../../store/slices/authSlice';
 import { selectCartCount } from '../../store/slices/cartSlice';
 import { setSearchQuery, toggleTheme } from '../../store/slices/uiSlice';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
 
 const Navbar = () => {
@@ -30,6 +30,26 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    toast.success('Logged out successfully.');
+    navigate('/login');
+  };
 
   // Modal State
   const [showLocationModal, setShowLocationModal] = useState(false);
@@ -112,16 +132,63 @@ const Navbar = () => {
                   
                   {/* User Actions */}
                   <div className="flex items-center gap-2">
-                    <Link to="/profile" className="flex items-center gap-2 hover:bg-gray-50 dark:hover:bg-dark-800 p-1.5 rounded-xl transition-all border border-gray-100 dark:border-dark-700/60 shadow-sm relative">
-                      <div className="w-7 h-7 rounded-full bg-primary-100 dark:bg-primary-950/40 text-primary-600 dark:text-primary-400 flex items-center justify-center font-bold text-sm">
-                        {user?.name?.charAt(0).toUpperCase()}
-                      </div>
-                      <span className="hidden sm:inline text-xs font-semibold text-dark-800 dark:text-dark-200">
-                        {user?.name?.split(' ')[0]}
-                      </span>
-                      {/* Notification Dot */}
-                      <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border border-white" />
-                    </Link>
+                    <div className="relative" ref={dropdownRef}>
+                      <button
+                        type="button"
+                        onClick={() => setDropdownOpen(!dropdownOpen)}
+                        className="flex items-center gap-2 hover:bg-gray-50 dark:hover:bg-dark-800 p-1.5 rounded-xl transition-all border border-gray-100 dark:border-dark-700/60 shadow-sm relative focus:outline-none"
+                      >
+                        <div className="w-7 h-7 rounded-full bg-primary-100 dark:bg-primary-950/40 text-primary-600 dark:text-primary-400 flex items-center justify-center font-bold text-sm">
+                          {user?.name?.charAt(0).toUpperCase()}
+                        </div>
+                        <span className="hidden sm:inline text-xs font-semibold text-dark-800 dark:text-dark-200">
+                          {user?.name?.split(' ')[0]}
+                        </span>
+                        {/* Notification Dot */}
+                        <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border border-white" />
+                      </button>
+
+                      {/* Dropdown Menu */}
+                      <AnimatePresence>
+                        {dropdownOpen && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                            transition={{ duration: 0.15 }}
+                            className="absolute right-0 mt-2 w-48 bg-white dark:bg-dark-800 rounded-2xl shadow-xl border border-gray-100 dark:border-dark-700/60 py-2 z-50 origin-top-right overflow-hidden"
+                          >
+                            <Link
+                              to="/orders"
+                              onClick={() => setDropdownOpen(false)}
+                              className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-dark-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-dark-700/50 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                            >
+                              <span>📦</span> My Orders
+                            </Link>
+                            
+                            <Link
+                              to="/profile"
+                              onClick={() => setDropdownOpen(false)}
+                              className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-dark-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-dark-700/50 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                            >
+                              <span>👤</span> My Profile
+                            </Link>
+
+                            <div className="h-px bg-gray-100 dark:bg-dark-700 my-1" />
+
+                            <button
+                              onClick={() => {
+                                setDropdownOpen(false);
+                                handleLogout();
+                              }}
+                              className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors text-left"
+                            >
+                              <IoLogOut className="w-4 h-4" /> Logout
+                            </button>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
 
                     {user?.role === 'admin' && (
                       <Link to="/admin" className="text-xs font-bold text-primary-600 hover:underline px-2">Admin</Link>
@@ -131,7 +198,7 @@ const Navbar = () => {
                     )}
 
                     <button 
-                      onClick={() => { dispatch(logout()); navigate('/'); }} 
+                      onClick={handleLogout} 
                       className="p-2.5 rounded-xl hover:bg-red-50 dark:hover:bg-red-950/20 text-red-500 transition-colors"
                       title="Logout"
                     >
