@@ -15,7 +15,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           
           {/* Brand & Newsletter Column */}
-          <div className="lg:col-span-1.5">
+          <div className="md:col-span-2 lg:col-span-2">
             <div className="flex items-center gap-2 mb-4">
               <span className="text-2xl">🍔</span>
               <span className="font-display font-bold text-xl text-white">FoodHub</span>

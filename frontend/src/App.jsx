@@ -23,10 +23,38 @@ import RestaurantDashboard from './pages/restaurant/RestaurantDashboard';
 const App = () => (
   <>
     <Toaster
-      position="top-right"
+      position="top-center"
       toastOptions={{
-        duration: 3000,
-        style: { borderRadius: '12px', background: '#1e293b', color: '#fff' },
+        duration: 3500,
+        style: {
+          borderRadius: '16px',
+          background: '#1e293b',
+          color: '#fff',
+          fontWeight: '600',
+          fontSize: '14px',
+          padding: '12px 24px',
+          boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)',
+        },
+        success: {
+          style: {
+            background: '#10b981', // Emerald green
+            color: '#fff',
+          },
+          iconTheme: {
+            primary: '#fff',
+            secondary: '#10b981',
+          },
+        },
+        error: {
+          style: {
+            background: '#ef4444', // Red
+            color: '#fff',
+          },
+          iconTheme: {
+            primary: '#fff',
+            secondary: '#ef4444',
+          },
+        },
       }}
     />
     <Routes>

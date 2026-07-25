@@ -331,6 +331,124 @@ const Navbar = () => {
           </div>
         )}
       </AnimatePresence>
+
+      {/* Mobile Menu Drawer */}
+      <AnimatePresence>
+        {menuOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.5 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMenuOpen(false)}
+              className="fixed inset-0 z-45 bg-black md:hidden"
+            />
+            {/* Drawer */}
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'tween', duration: 0.3 }}
+              className="fixed right-0 top-0 bottom-0 z-50 w-72 bg-white dark:bg-dark-900 shadow-2xl p-6 flex flex-col md:hidden text-dark-900 dark:text-white"
+            >
+              {/* Header */}
+              <div className="flex justify-between items-center mb-6">
+                <span className="font-display font-extrabold text-lg">Menu</span>
+                <button
+                  onClick={() => setMenuOpen(false)}
+                  className="p-2 rounded-xl bg-gray-50 dark:bg-dark-800 text-dark-600 dark:text-dark-300"
+                >
+                  <IoClose className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Mobile Search */}
+              <form onSubmit={(e) => { handleSearch(e); setMenuOpen(false); }} className="mb-6">
+                <div className="relative">
+                  <IoSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <input
+                    type="text"
+                    placeholder="Search food, restaurants..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 rounded-xl bg-gray-50 dark:bg-dark-800 border border-gray-150 dark:border-dark-700 outline-none text-xs dark:text-white"
+                  />
+                </div>
+              </form>
+
+              {/* Navigation Links */}
+              <div className="flex flex-col gap-4 flex-1 overflow-y-auto">
+                <Link to="/" onClick={() => setMenuOpen(false)} className="flex items-center gap-2.5 py-2.5 px-3 rounded-xl font-bold text-sm hover:bg-gray-50 dark:hover:bg-dark-800 transition-colors">
+                  🏠 Home
+                </Link>
+                <Link to="/restaurants" onClick={() => setMenuOpen(false)} className="flex items-center gap-2.5 py-2.5 px-3 rounded-xl font-bold text-sm hover:bg-gray-50 dark:hover:bg-dark-800 transition-colors">
+                  🍕 Restaurants
+                </Link>
+
+                <button
+                  onClick={() => {
+                    setMenuOpen(false);
+                    setShowLocationModal(true);
+                  }}
+                  className="flex items-center gap-2.5 py-2.5 px-3 rounded-xl font-bold text-sm text-left hover:bg-gray-50 dark:hover:bg-dark-800 w-full transition-colors"
+                >
+                  📍 Delivery: Nagal Koju
+                </button>
+
+                {isAuthenticated ? (
+                  <>
+                    <Link to="/orders" onClick={() => setMenuOpen(false)} className="flex items-center gap-2.5 py-2.5 px-3 rounded-xl font-bold text-sm hover:bg-gray-50 dark:hover:bg-dark-800 transition-colors">
+                      📦 My Orders
+                    </Link>
+                    <Link to="/wishlist" onClick={() => setMenuOpen(false)} className="flex items-center gap-2.5 py-2.5 px-3 rounded-xl font-bold text-sm hover:bg-gray-50 dark:hover:bg-dark-800 transition-colors">
+                      ❤️ Wishlist
+                    </Link>
+                    <Link to="/profile" onClick={() => setMenuOpen(false)} className="flex items-center gap-2.5 py-2.5 px-3 rounded-xl font-bold text-sm hover:bg-gray-50 dark:hover:bg-dark-800 transition-colors">
+                      👤 My Profile
+                    </Link>
+                  </>
+                ) : null}
+              </div>
+
+              {/* Bottom Auth */}
+              <div className="border-t border-gray-100 dark:border-dark-800 pt-6 mt-auto">
+                {isAuthenticated ? (
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-center gap-3 px-3">
+                      <div className="w-9 h-9 rounded-full bg-primary-100 dark:bg-primary-950/40 text-primary-600 dark:text-primary-400 flex items-center justify-center font-bold text-base">
+                        {user?.name?.charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold truncate max-w-[180px]">{user?.name}</p>
+                        <p className="text-[10px] text-dark-400 truncate max-w-[180px]">{user?.email}</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setMenuOpen(false);
+                        handleLogout();
+                      }}
+                      className="w-full py-2.5 px-4 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 hover:bg-red-100 font-extrabold text-sm rounded-xl transition-all text-center flex items-center justify-center gap-2"
+                    >
+                      <IoLogOut className="w-4 h-4" /> Logout
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-2">
+                    <Link to="/login" onClick={() => setMenuOpen(false)} className="w-full py-2.5 px-4 bg-gray-50 dark:bg-dark-800 text-dark-700 dark:text-slate-200 hover:bg-gray-100 font-extrabold text-sm rounded-xl text-center">
+                      Login
+                    </Link>
+                    <Link to="/signup" onClick={() => setMenuOpen(false)} className="w-full py-2.5 px-4 bg-primary-600 text-white hover:bg-primary-700 font-extrabold text-sm rounded-xl text-center">
+                      Sign Up
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </>
   );
 };
