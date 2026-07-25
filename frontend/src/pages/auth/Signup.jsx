@@ -22,6 +22,26 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     dispatch(clearError());
+
+    // Form validations
+    if (form.name.trim().length < 2) {
+      toast.error('Name must be at least 2 characters long.');
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(form.email)) {
+      toast.error('Please enter a valid email address.');
+      return;
+    }
+    if (form.phone && !/^[0-9]{10}$/.test(form.phone)) {
+      toast.error('Phone number must be a valid 10-digit number.');
+      return;
+    }
+    if (form.password.length < 6) {
+      toast.error('Password must be at least 6 characters long.');
+      return;
+    }
+
     const result = await dispatch(registerUser(form));
     if (registerUser.fulfilled.match(result)) {
       toast.success('Account created successfully!');

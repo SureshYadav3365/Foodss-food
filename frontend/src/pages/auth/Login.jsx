@@ -23,6 +23,18 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     dispatch(clearError());
+    
+    // Form validations
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(form.email)) {
+      toast.error('Please enter a valid email address.');
+      return;
+    }
+    if (form.password.length < 6) {
+      toast.error('Password must be at least 6 characters long.');
+      return;
+    }
+
     const result = await dispatch(loginUser(form));
     if (loginUser.fulfilled.match(result)) {
       toast.success('Welcome back!');
