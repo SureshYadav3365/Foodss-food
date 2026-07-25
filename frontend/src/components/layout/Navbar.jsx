@@ -95,7 +95,7 @@ const Navbar = () => {
             <div className="flex items-center gap-1 sm:gap-3">
               <button 
                 onClick={() => setShowLocationModal(true)}
-                className="hidden sm:flex items-center gap-1 text-sm text-dark-600 dark:text-dark-300 hover:text-primary-600 dark:hover:text-primary-400 px-3 py-2 rounded-xl hover:bg-gray-50 dark:hover:bg-dark-800 transition-colors"
+                className="hidden md:flex items-center gap-1 text-sm text-dark-600 dark:text-dark-300 hover:text-primary-600 dark:hover:text-primary-400 px-3 py-2 rounded-xl hover:bg-gray-50 dark:hover:bg-dark-800 transition-colors"
               >
                 <HiLocationMarker className="w-4 h-4 text-primary-600" />
                 <span className="max-w-[120px] truncate">Nagal Koju</span>
@@ -103,7 +103,7 @@ const Navbar = () => {
 
               <button
                 onClick={() => dispatch(toggleTheme())}
-                className="hidden sm:flex p-2.5 rounded-xl hover:bg-gray-50 dark:hover:bg-dark-800 text-dark-600 dark:text-dark-300 transition-colors text-lg"
+                className="hidden md:flex p-2.5 rounded-xl hover:bg-gray-50 dark:hover:bg-dark-800 text-dark-600 dark:text-dark-300 transition-colors text-lg"
                 title="Toggle Light/Dark Theme"
               >
                 {theme === 'light' ? '🌙' : '☀️'}
@@ -111,7 +111,7 @@ const Navbar = () => {
 
               {isAuthenticated && (
                 <>
-                  <Link to="/wishlist" className="hidden sm:flex p-2.5 rounded-xl hover:bg-gray-50 dark:hover:bg-dark-800 text-dark-600 dark:text-dark-300 transition-colors relative" title="Wishlist">
+                  <Link to="/wishlist" className="hidden md:flex p-2.5 rounded-xl hover:bg-gray-50 dark:hover:bg-dark-800 text-dark-600 dark:text-dark-300 transition-colors relative" title="Wishlist">
                     <IoHeart className="w-5 h-5" />
                   </Link>
 
@@ -128,10 +128,10 @@ const Navbar = () => {
 
               {isAuthenticated ? (
                 <>
-                  <div className="hidden sm:block h-6 w-px bg-gray-200 dark:bg-dark-700" />
+                  <div className="hidden md:block h-6 w-px bg-gray-200 dark:bg-dark-700" />
                   
                   {/* User Actions */}
-                  <div className="hidden sm:flex items-center gap-2">
+                  <div className="hidden md:flex items-center gap-2">
                     <div className="relative" ref={dropdownRef}>
                       <button
                         type="button"
@@ -207,7 +207,7 @@ const Navbar = () => {
                   </div>
                 </>
               ) : (
-                <div className="hidden sm:flex items-center gap-2">
+                <div className="hidden md:flex items-center gap-2">
                   <Link to="/login" className="text-sm font-medium text-dark-600 dark:text-dark-300 hover:text-primary-600 dark:hover:text-primary-400 px-4 py-2 rounded-xl hover:bg-gray-50 dark:hover:bg-dark-800 transition-colors">
                     Login
                   </Link>
@@ -396,13 +396,30 @@ const Navbar = () => {
                   📍 Delivery: Nagal Koju
                 </button>
 
+                <button
+                  onClick={() => {
+                    dispatch(toggleTheme());
+                  }}
+                  className="flex items-center gap-2.5 py-2.5 px-3 rounded-xl font-bold text-sm text-left hover:bg-gray-50 dark:hover:bg-dark-800 w-full transition-colors"
+                >
+                  <span>{theme === 'light' ? '🌙' : '☀️'}</span> {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+                </button>
+
                 {isAuthenticated ? (
                   <>
-                    <Link to="/orders" onClick={() => setMenuOpen(false)} className="flex items-center gap-2.5 py-2.5 px-3 rounded-xl font-bold text-sm hover:bg-gray-50 dark:hover:bg-dark-800 transition-colors">
-                      📦 My Orders
+                    <Link to="/cart" onClick={() => setMenuOpen(false)} className="flex items-center justify-between py-2.5 px-3 rounded-xl font-bold text-sm hover:bg-gray-50 dark:hover:bg-dark-800 transition-colors">
+                      <span className="flex items-center gap-2.5">🛒 My Cart</span>
+                      {cartCount > 0 && (
+                        <span className="bg-primary-600 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                          {cartCount}
+                        </span>
+                      )}
                     </Link>
                     <Link to="/wishlist" onClick={() => setMenuOpen(false)} className="flex items-center gap-2.5 py-2.5 px-3 rounded-xl font-bold text-sm hover:bg-gray-50 dark:hover:bg-dark-800 transition-colors">
                       ❤️ Wishlist
+                    </Link>
+                    <Link to="/orders" onClick={() => setMenuOpen(false)} className="flex items-center gap-2.5 py-2.5 px-3 rounded-xl font-bold text-sm hover:bg-gray-50 dark:hover:bg-dark-800 transition-colors">
+                      📦 My Orders
                     </Link>
                     <Link to="/profile" onClick={() => setMenuOpen(false)} className="flex items-center gap-2.5 py-2.5 px-3 rounded-xl font-bold text-sm hover:bg-gray-50 dark:hover:bg-dark-800 transition-colors">
                       👤 My Profile
