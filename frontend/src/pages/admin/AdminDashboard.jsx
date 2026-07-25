@@ -134,7 +134,7 @@ const AdminDashboardContent = () => {
           <div>
             <div className="flex justify-between mb-4">
               <h2 className="font-display font-bold text-lg">Restaurants ({restaurants.length})</h2>
-              <Button size="sm" onClick={() => setModal({ open: true, type: 'restaurant', data: { name: '', cuisine: [], city: 'Mumbai', deliveryTime: '30-40 mins', deliveryFee: 40, minOrder: 99 } })}>
+              <Button size="sm" onClick={() => setModal({ open: true, type: 'restaurant', data: { name: '', cuisine: [], city: 'Nagal Koju', deliveryTime: '30-40 mins', deliveryFee: 40, minOrder: 99 } })}>
                 <IoAdd className="inline mr-1" /> Add Restaurant
               </Button>
             </div>

@@ -7,7 +7,7 @@ import { IoMail, IoLockClosed, IoPerson } from 'react-icons/io5';
 import Layout from '../../components/layout/Layout';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
-import { registerUser, clearError } from '../../store/slices/authSlice';
+import { registerUser, clearError, logout } from '../../store/slices/authSlice';
 
 const Signup = () => {
   const [form, setForm] = useState({ name: '', email: '', password: '', role: 'user', phone: '' });
@@ -20,8 +20,9 @@ const Signup = () => {
     dispatch(clearError());
     const result = await dispatch(registerUser(form));
     if (registerUser.fulfilled.match(result)) {
-      toast.success('Account created successfully!');
-      navigate('/');
+      toast.success('Account created successfully! Please log in.');
+      dispatch(logout());
+      navigate('/login');
     } else {
       toast.error(result.payload || 'Registration failed');
     }
@@ -44,7 +45,7 @@ const Signup = () => {
               <Input label="Phone" type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
               <Input label="Password" type="password" icon={<IoLockClosed />} value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} error={error} required />
               <div>
-                <label className="block text-sm font-medium text-dark-700 mb-1.5">Account Type</label>
+                <label className="block text-sm font-medium text-dark-700 dark:text-dark-300 mb-1.5">Account Type</label>
                 <select className="input-field" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
                   <option value="user">Customer</option>
                   <option value="restaurant">Restaurant Owner</option>

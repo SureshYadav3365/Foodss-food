@@ -1,14 +1,23 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { authAPI } from '../../api';
 
+const getErrorMessage = (err, fallback) => {
+  const errorData = err.response?.data;
+  if (errorData?.errors && Array.isArray(errorData.errors) && errorData.errors.length > 0) {
+    return errorData.errors.join(', ');
+  }
+  return errorData?.message || err.message || fallback;
+};
+
 export const loginUser = createAsyncThunk('auth/login', async (credentials, { rejectWithValue }) => {
   try {
     const { data } = await authAPI.login(credentials);
     localStorage.setItem('token', data.data.token);
+    localStorage.setItem('refreshToken', data.data.refreshToken);
     localStorage.setItem('user', JSON.stringify(data.data.user));
     return data.data;
   } catch (err) {
-    return rejectWithValue(err.response?.data?.message || 'Login failed');
+    return rejectWithValue(getErrorMessage(err, 'Login failed'));
   }
 });
 
@@ -16,10 +25,11 @@ export const registerUser = createAsyncThunk('auth/register', async (userData, {
   try {
     const { data } = await authAPI.register(userData);
     localStorage.setItem('token', data.data.token);
+    localStorage.setItem('refreshToken', data.data.refreshToken);
     localStorage.setItem('user', JSON.stringify(data.data.user));
     return data.data;
   } catch (err) {
-    return rejectWithValue(err.response?.data?.message || 'Registration failed');
+    return rejectWithValue(getErrorMessage(err, 'Registration failed'));
   }
 });
 
@@ -29,7 +39,7 @@ export const fetchMe = createAsyncThunk('auth/fetchMe', async (_, { rejectWithVa
     localStorage.setItem('user', JSON.stringify(data.data));
     return data.data;
   } catch (err) {
-    return rejectWithValue(err.response?.data?.message);
+    return rejectWithValue(getErrorMessage(err, 'Failed to fetch user'));
   }
 });
 
@@ -50,6 +60,7 @@ const authSlice = createSlice({
       state.token = null;
       state.isAuthenticated = false;
       localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
       localStorage.removeItem('user');
     },
     clearError: (state) => {

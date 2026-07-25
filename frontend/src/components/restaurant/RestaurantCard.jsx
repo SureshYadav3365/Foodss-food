@@ -17,6 +17,10 @@ const RestaurantCard = ({ restaurant, index = 0 }) => (
           alt={restaurant.name}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
           loading="lazy"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = FOOD_IMAGES.restaurant;
+          }}
         />
         {restaurant.isFeatured && (
           <span className="absolute top-3 left-3 badge bg-yellow-400 text-yellow-900 font-semibold">Featured</span>

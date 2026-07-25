@@ -13,6 +13,7 @@ const foodSchema = new mongoose.Schema(
     isAvailable: { type: Boolean, default: true },
     rating: { type: Number, default: 0, min: 0, max: 5 },
     reviewCount: { type: Number, default: 0 },
+    calories: { type: Number, default: null },
     tags: [{ type: String }],
     spiceLevel: { type: String, enum: ['mild', 'medium', 'hot'], default: 'mild' },
   },

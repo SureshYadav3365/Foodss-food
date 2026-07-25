@@ -56,7 +56,7 @@ const Login = () => {
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
                 required
               />
-              <div>
+              <div className="relative">
                 <Input
                   label="Password"
                   type={showPass ? 'text' : 'password'}

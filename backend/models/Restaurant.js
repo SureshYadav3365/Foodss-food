@@ -13,6 +13,7 @@ const restaurantSchema = new mongoose.Schema(
     deliveryFee: { type: Number, default: 40 },
     minOrder: { type: Number, default: 99 },
     address: { type: String, default: '' },
+    openingHours: { type: String, default: '9:00 AM - 10:00 PM' },
     city: { type: String, default: '' },
     isActive: { type: Boolean, default: true },
     isFeatured: { type: Boolean, default: false },

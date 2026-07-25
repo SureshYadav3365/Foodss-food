@@ -22,7 +22,7 @@ const Contact = () => {
   const contactDetails = [
     { icon: <IoCall className="w-6 h-6" />, label: 'Call Us', value: '+1 (800) 555-FOOD', sub: 'Mon-Sun: 9 AM - 11 PM' },
     { icon: <IoMail className="w-6 h-6" />, label: 'Email Support', value: 'support@foodhub.com', sub: 'Response within 2 hours' },
-    { icon: <IoLocation className="w-6 h-6" />, label: 'Corporate Office', value: '100 Food Plaza, Suite 4B', sub: 'Mumbai, MH 400001' },
+    { icon: <IoLocation className="w-6 h-6" />, label: 'Corporate Office', value: '100 Food Plaza, Suite 4B', sub: 'Nagal Koju, RJ 303007' },
   ];
 
   return (

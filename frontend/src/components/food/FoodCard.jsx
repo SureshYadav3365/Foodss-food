@@ -46,6 +46,10 @@ const FoodCard = ({ food, index = 0, showRestaurant = true }) => {
             alt={food.name}
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
             loading="lazy"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = FOOD_IMAGES.default;
+            }}
           />
           <button
             onClick={handleWishlist}
@@ -56,6 +60,11 @@ const FoodCard = ({ food, index = 0, showRestaurant = true }) => {
           {food.discountPrice && (
             <span className="absolute top-3 left-3 badge bg-green-500 text-white font-semibold">
               {Math.round(((food.price - food.discountPrice) / food.price) * 100)}% OFF
+            </span>
+          )}
+          {food.tags?.includes('bestseller') && (
+            <span className="absolute bottom-3 left-3 badge bg-amber-500 text-white font-semibold shadow-sm text-[10px]">
+              ★ BESTSELLER
             </span>
           )}
         </div>
