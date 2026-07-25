@@ -177,7 +177,7 @@ const CheckoutContent = () => {
       {/* Online Payment Modal */}
       {showPayment && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl p-8 max-w-md w-full text-center animate-slide-up">
+          <div className="bg-white rounded-2xl p-6 sm:p-8 max-w-md w-[92vw] max-h-[90vh] overflow-y-auto text-center animate-slide-up">
             {paymentProcessing ? (
               <>
                 <div className="w-16 h-16 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin mx-auto" />
@@ -207,7 +207,7 @@ const CheckoutContent = () => {
       {/* Order Confirmed Success Modal */}
       {showSuccessModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md overflow-y-auto">
-          <div className="bg-white dark:bg-dark-800 rounded-3xl p-8 max-w-lg w-full text-center relative shadow-2xl border border-gray-100 dark:border-dark-700/60 transition-all animate-scale-up">
+          <div className="bg-white dark:bg-dark-800 rounded-3xl p-6 sm:p-8 max-w-lg w-[92vw] max-h-[90vh] overflow-y-auto text-center relative shadow-2xl border border-gray-100 dark:border-dark-700/60 transition-all animate-scale-up">
             
             {/* Confetti Celebration Particles */}
             <div className="absolute top-8 left-12 w-2 h-2 bg-yellow-400 rounded-full animate-ping" />

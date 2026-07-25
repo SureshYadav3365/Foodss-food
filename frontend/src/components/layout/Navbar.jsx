@@ -103,7 +103,7 @@ const Navbar = () => {
 
               <button
                 onClick={() => dispatch(toggleTheme())}
-                className="p-2.5 rounded-xl hover:bg-gray-50 dark:hover:bg-dark-800 text-dark-600 dark:text-dark-300 transition-colors text-lg"
+                className="hidden sm:flex p-2.5 rounded-xl hover:bg-gray-50 dark:hover:bg-dark-800 text-dark-600 dark:text-dark-300 transition-colors text-lg"
                 title="Toggle Light/Dark Theme"
               >
                 {theme === 'light' ? '🌙' : '☀️'}
@@ -111,7 +111,7 @@ const Navbar = () => {
 
               {isAuthenticated && (
                 <>
-                  <Link to="/wishlist" className="p-2.5 rounded-xl hover:bg-gray-50 dark:hover:bg-dark-800 text-dark-600 dark:text-dark-300 transition-colors relative" title="Wishlist">
+                  <Link to="/wishlist" className="hidden sm:flex p-2.5 rounded-xl hover:bg-gray-50 dark:hover:bg-dark-800 text-dark-600 dark:text-dark-300 transition-colors relative" title="Wishlist">
                     <IoHeart className="w-5 h-5" />
                   </Link>
 
@@ -128,10 +128,10 @@ const Navbar = () => {
 
               {isAuthenticated ? (
                 <>
-                  <div className="h-6 w-px bg-gray-200 dark:bg-dark-700" />
+                  <div className="hidden sm:block h-6 w-px bg-gray-200 dark:bg-dark-700" />
                   
                   {/* User Actions */}
-                  <div className="flex items-center gap-2">
+                  <div className="hidden sm:flex items-center gap-2">
                     <div className="relative" ref={dropdownRef}>
                       <button
                         type="button"
@@ -207,7 +207,7 @@ const Navbar = () => {
                   </div>
                 </>
               ) : (
-                <div className="flex items-center gap-2">
+                <div className="hidden sm:flex items-center gap-2">
                   <Link to="/login" className="text-sm font-medium text-dark-600 dark:text-dark-300 hover:text-primary-600 dark:hover:text-primary-400 px-4 py-2 rounded-xl hover:bg-gray-50 dark:hover:bg-dark-800 transition-colors">
                     Login
                   </Link>
@@ -233,7 +233,7 @@ const Navbar = () => {
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              className="bg-white dark:bg-dark-800 rounded-3xl p-6 max-w-xl w-full relative shadow-2xl border border-gray-100 dark:border-dark-700/60 transition-colors text-dark-900 dark:text-white"
+              className="bg-white dark:bg-dark-800 rounded-3xl p-5 sm:p-6 max-w-xl w-[92vw] max-h-[90vh] overflow-y-auto relative shadow-2xl border border-gray-100 dark:border-dark-700/60 transition-colors text-dark-900 dark:text-white"
             >
               
               {/* Modal Header */}

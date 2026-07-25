@@ -479,7 +479,7 @@ const Home = () => {
 
       {/* 14. Download Mobile App Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="bg-gradient-to-br from-slate-900 to-dark-950 dark:from-dark-850 dark:to-dark-950 rounded-3xl overflow-hidden p-8 md:p-12 text-white border border-slate-800 dark:border-dark-800 shadow-2xl relative">
+        <div className="bg-gradient-to-br from-slate-900 to-dark-950 dark:from-dark-850 dark:to-dark-950 rounded-3xl overflow-hidden p-6 sm:p-8 md:p-12 text-white border border-slate-800 dark:border-dark-800 shadow-2xl relative">
           <div className="absolute inset-0 bg-grid-pattern opacity-5 pointer-events-none" />
           <div className="grid md:grid-cols-12 gap-12 items-center">
             
@@ -671,7 +671,7 @@ const Home = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-slate-900 border border-slate-800 rounded-3xl p-8 max-w-sm w-full relative text-center text-white shadow-2xl"
+              className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-sm w-[92vw] max-h-[90vh] overflow-y-auto relative text-center text-white shadow-2xl"
             >
               <button
                 onClick={() => setShowQRModal(false)}
@@ -696,7 +696,7 @@ const Home = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="max-w-xl w-full rounded-2xl overflow-hidden shadow-2xl border border-slate-800 relative bg-slate-950 min-h-[200px] flex items-center justify-center"
+              className="max-w-xl w-[92vw] max-h-[90vh] overflow-y-auto rounded-2xl overflow-hidden shadow-2xl border border-slate-800 relative bg-slate-950 min-h-[200px] flex items-center justify-center"
             >
               <button
                 onClick={() => setShowVideoModal(false)}
