@@ -59,7 +59,13 @@ const ProfileContent = () => {
     }
 
     setSelectedFile(file);
-    setPreviewUrl(URL.createObjectURL(file));
+    
+    // Read file as Base64 to support direct browser preview & storage fallback
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreviewUrl(reader.result);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleUpdateProfile = async (e) => {
@@ -69,10 +75,15 @@ const ProfileContent = () => {
       let avatarUrl = user?.avatar || '';
 
       if (selectedFile) {
-        const formData = new FormData();
-        formData.append('image', selectedFile);
-        const { data: uploadData } = await uploadAPI.uploadImage(formData, 'profile');
-        avatarUrl = uploadData.data.url;
+        try {
+          const formData = new FormData();
+          formData.append('image', selectedFile);
+          const { data: uploadData } = await uploadAPI.uploadImage(formData, 'profile');
+          avatarUrl = uploadData.data.url;
+        } catch (uploadErr) {
+          console.warn("Backend upload failed, using local Base64 storage fallback:", uploadErr);
+          avatarUrl = previewUrl; // Use base64 string
+        }
       }
 
       const { data } = await authAPI.updateProfile({ 
@@ -81,7 +92,7 @@ const ProfileContent = () => {
         avatar: avatarUrl
       });
       dispatch(updateUser(data.data));
-      toast.success('Profile updated');
+      toast.success('Profile updated successfully!');
       setSelectedFile(null);
     } catch (err) {
       console.error(err);

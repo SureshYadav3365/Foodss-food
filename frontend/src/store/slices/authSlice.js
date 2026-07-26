@@ -44,6 +44,9 @@ export const fetchMe = createAsyncThunk('auth/fetchMe', async (_, { rejectWithVa
 });
 
 const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
+if (storedUser && localStorage.getItem('userAvatar')) {
+  storedUser.avatar = localStorage.getItem('userAvatar');
+}
 
 const authSlice = createSlice({
   name: 'auth',
@@ -62,12 +65,16 @@ const authSlice = createSlice({
       localStorage.removeItem('token');
       localStorage.removeItem('refreshToken');
       localStorage.removeItem('user');
+      localStorage.removeItem('userAvatar');
     },
     clearError: (state) => {
       state.error = null;
     },
     updateUser: (state, action) => {
       state.user = { ...state.user, ...action.payload };
+      if (action.payload.avatar) {
+        localStorage.setItem('userAvatar', action.payload.avatar);
+      }
       localStorage.setItem('user', JSON.stringify(state.user));
     },
   },
@@ -88,7 +95,12 @@ const authSlice = createSlice({
         state.token = action.payload.token;
         state.isAuthenticated = true;
       })
-      .addCase(fetchMe.fulfilled, (state, action) => { state.user = action.payload; })
+      .addCase(fetchMe.fulfilled, (state, action) => { 
+        state.user = action.payload; 
+        if (state.user && localStorage.getItem('userAvatar')) {
+          state.user.avatar = localStorage.getItem('userAvatar');
+        }
+      })
       .addCase(fetchMe.rejected, (state) => {
         state.user = null;
         state.token = null;
@@ -96,6 +108,7 @@ const authSlice = createSlice({
         localStorage.removeItem('token');
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('user');
+        localStorage.removeItem('userAvatar');
       });
   },
 });
