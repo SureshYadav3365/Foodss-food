@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import toast from 'react-hot-toast';
 import { IoPerson, IoMail, IoCall, IoLocation, IoAdd, IoTrash } from 'react-icons/io5';
@@ -6,7 +6,7 @@ import Layout from '../components/layout/Layout';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
 import ProtectedRoute from '../components/layout/ProtectedRoute';
-import { authAPI } from '../api';
+import { authAPI, uploadAPI } from '../api';
 import { updateUser } from '../store/slices/authSlice';
 
 const ProfileContent = () => {
@@ -16,14 +16,72 @@ const ProfileContent = () => {
   const [addresses, setAddresses] = useState(user?.addresses || []);
   const [loading, setLoading] = useState(false);
 
+  const fileInputRef = useRef(null);
+  const [previewUrl, setPreviewUrl] = useState(user?.avatar || '');
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  useEffect(() => {
+    if (user?.avatar) {
+      setPreviewUrl(user.avatar);
+    }
+  }, [user?.avatar]);
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl && previewUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
+
+  const handleAvatarClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate type (PNG, JPG, JPEG)
+    const validTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+    if (!validTypes.includes(file.type)) {
+      toast.error('Only PNG, JPG, or JPEG images are allowed.');
+      return;
+    }
+
+    // Validate size (under 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image size must be less than 5MB.');
+      return;
+    }
+
+    setSelectedFile(file);
+    setPreviewUrl(URL.createObjectURL(file));
+  };
+
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const { data } = await authAPI.updateProfile({ name: form.name, phone: form.phone });
+      let avatarUrl = user?.avatar || '';
+
+      if (selectedFile) {
+        const formData = new FormData();
+        formData.append('image', selectedFile);
+        const { data: uploadData } = await uploadAPI.uploadImage(formData, 'profile');
+        avatarUrl = uploadData.data.url;
+      }
+
+      const { data } = await authAPI.updateProfile({ 
+        name: form.name, 
+        phone: form.phone,
+        avatar: avatarUrl
+      });
       dispatch(updateUser(data.data));
       toast.success('Profile updated');
-    } catch {
+      setSelectedFile(null);
+    } catch (err) {
+      console.error(err);
       toast.error('Failed to update profile');
     } finally {
       setLoading(false);
@@ -55,8 +113,44 @@ const ProfileContent = () => {
 
         <div className="card p-6 mb-6">
           <div className="flex items-center gap-4 mb-6">
-            <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center">
-              <IoPerson className="w-8 h-8 text-primary-600" />
+            <div className="relative">
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                accept="image/png, image/jpeg, image/jpg"
+                className="hidden"
+              />
+              <div
+                onClick={handleAvatarClick}
+                className="relative group cursor-pointer w-16 h-16 rounded-full overflow-hidden border-2 border-primary-200 dark:border-primary-800 shadow-sm transition-all hover:border-primary-500 hover:shadow-md flex items-center justify-center bg-primary-100 dark:bg-primary-950/40 text-primary-600 dark:text-primary-400"
+              >
+                {previewUrl ? (
+                  <img
+                    src={previewUrl}
+                    alt="Profile Avatar"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <IoPerson className="w-8 h-8 text-primary-600 dark:text-primary-400" />
+                )}
+                
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <span className="text-white text-[10px] font-bold tracking-wider uppercase">Upload</span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleAvatarClick}
+                className="absolute bottom-0 right-0 w-5 h-5 bg-primary-600 hover:bg-primary-700 text-white rounded-full flex items-center justify-center shadow-md transition-colors focus:outline-none border border-white dark:border-dark-800"
+                title="Change profile picture"
+              >
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </button>
             </div>
             <div>
               <h2 className="font-display font-bold text-xl">{user?.name}</h2>

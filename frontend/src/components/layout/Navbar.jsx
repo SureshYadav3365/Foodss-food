@@ -138,9 +138,17 @@ const Navbar = () => {
                         onClick={() => setDropdownOpen(!dropdownOpen)}
                         className="flex items-center gap-2 hover:bg-gray-50 dark:hover:bg-dark-800 p-1.5 rounded-xl transition-all border border-gray-100 dark:border-dark-700/60 shadow-sm relative focus:outline-none"
                       >
-                        <div className="w-7 h-7 rounded-full bg-primary-100 dark:bg-primary-950/40 text-primary-600 dark:text-primary-400 flex items-center justify-center font-bold text-sm">
-                          {user?.name?.charAt(0).toUpperCase()}
-                        </div>
+                        {user?.avatar ? (
+                          <img
+                            src={user.avatar}
+                            alt={user.name}
+                            className="w-7 h-7 rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-7 h-7 rounded-full bg-primary-100 dark:bg-primary-950/40 text-primary-600 dark:text-primary-400 flex items-center justify-center font-bold text-sm">
+                            {user?.name?.charAt(0).toUpperCase()}
+                          </div>
+                        )}
                         <span className="hidden sm:inline text-xs font-semibold text-dark-800 dark:text-dark-200">
                           {user?.name?.split(' ')[0]}
                         </span>
@@ -433,9 +441,17 @@ const Navbar = () => {
                 {isAuthenticated ? (
                   <div className="flex flex-col gap-3">
                     <div className="flex items-center gap-3 px-3">
-                      <div className="w-9 h-9 rounded-full bg-primary-100 dark:bg-primary-950/40 text-primary-600 dark:text-primary-400 flex items-center justify-center font-bold text-base">
-                        {user?.name?.charAt(0).toUpperCase()}
-                      </div>
+                      {user?.avatar ? (
+                        <img
+                          src={user.avatar}
+                          alt={user.name}
+                          className="w-9 h-9 rounded-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-9 h-9 rounded-full bg-primary-100 dark:bg-primary-950/40 text-primary-600 dark:text-primary-400 flex items-center justify-center font-bold text-base">
+                          {user?.name?.charAt(0).toUpperCase()}
+                        </div>
+                      )}
                       <div>
                         <p className="text-xs font-bold truncate max-w-[180px]">{user?.name}</p>
                         <p className="text-[10px] text-dark-400 truncate max-w-[180px]">{user?.email}</p>
