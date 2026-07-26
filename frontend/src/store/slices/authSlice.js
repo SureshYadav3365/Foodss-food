@@ -44,8 +44,12 @@ export const fetchMe = createAsyncThunk('auth/fetchMe', async (_, { rejectWithVa
 });
 
 const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
-if (storedUser && localStorage.getItem('userAvatar')) {
-  storedUser.avatar = localStorage.getItem('userAvatar');
+if (storedUser && storedUser.email) {
+  const savedAvatar = localStorage.getItem(`userAvatar_${storedUser.email}`) || localStorage.getItem('userAvatar');
+  if (savedAvatar) {
+    storedUser.avatar = savedAvatar;
+    localStorage.setItem(`userAvatar_${storedUser.email}`, savedAvatar);
+  }
 }
 
 const authSlice = createSlice({
@@ -71,9 +75,22 @@ const authSlice = createSlice({
       state.error = null;
     },
     updateUser: (state, action) => {
+      const email = state.user?.email || action.payload?.email;
+      if (email) {
+        if (action.payload.avatar) {
+          localStorage.setItem(`userAvatar_${email}`, action.payload.avatar);
+        } else if (action.payload.avatar === null) {
+          localStorage.removeItem(`userAvatar_${email}`);
+        }
+      }
       state.user = { ...state.user, ...action.payload };
-      if (action.payload.avatar) {
-        localStorage.setItem('userAvatar', action.payload.avatar);
+      if (state.user && email) {
+        const savedAvatar = localStorage.getItem(`userAvatar_${email}`);
+        if (savedAvatar) {
+          state.user.avatar = savedAvatar;
+        } else if (action.payload.avatar === null) {
+          state.user.avatar = null;
+        }
       }
       localStorage.setItem('user', JSON.stringify(state.user));
     },
@@ -86,6 +103,13 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.token = action.payload.token;
         state.isAuthenticated = true;
+        if (state.user && state.user.email) {
+          const savedAvatar = localStorage.getItem(`userAvatar_${state.user.email}`) || localStorage.getItem('userAvatar');
+          if (savedAvatar) {
+            state.user.avatar = savedAvatar;
+          }
+          localStorage.setItem('user', JSON.stringify(state.user));
+        }
       })
       .addCase(loginUser.rejected, (state, action) => { state.loading = false; state.error = action.payload; })
       .addCase(registerUser.pending, (state) => { state.loading = true; state.error = null; })
@@ -94,11 +118,22 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.token = action.payload.token;
         state.isAuthenticated = true;
+        if (state.user && state.user.email) {
+          const savedAvatar = localStorage.getItem(`userAvatar_${state.user.email}`) || localStorage.getItem('userAvatar');
+          if (savedAvatar) {
+            state.user.avatar = savedAvatar;
+          }
+          localStorage.setItem('user', JSON.stringify(state.user));
+        }
       })
       .addCase(fetchMe.fulfilled, (state, action) => { 
         state.user = action.payload; 
-        if (state.user && localStorage.getItem('userAvatar')) {
-          state.user.avatar = localStorage.getItem('userAvatar');
+        if (state.user && state.user.email) {
+          const savedAvatar = localStorage.getItem(`userAvatar_${state.user.email}`) || localStorage.getItem('userAvatar');
+          if (savedAvatar) {
+            state.user.avatar = savedAvatar;
+          }
+          localStorage.setItem('user', JSON.stringify(state.user));
         }
       })
       .addCase(fetchMe.rejected, (state) => {

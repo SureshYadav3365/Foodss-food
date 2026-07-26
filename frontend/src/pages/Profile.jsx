@@ -45,10 +45,10 @@ const ProfileContent = () => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Validate type (PNG, JPG, JPEG)
-    const validTypes = ['image/png', 'image/jpeg', 'image/jpg'];
-    if (!validTypes.includes(file.type)) {
-      toast.error('Only PNG, JPG, or JPEG images are allowed.');
+    // Validate type (PNG, JPG, JPEG, WEBP)
+    const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+    if (!validTypes.includes(file.type.toLowerCase())) {
+      toast.error('Only PNG, JPG, JPEG, or WEBP images are allowed.');
       return;
     }
 
@@ -72,26 +72,19 @@ const ProfileContent = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      let avatarUrl = user?.avatar || '';
+      // Keep avatar entirely frontend-only.
+      // Use previewUrl (which holds the base64 data url from handleFileChange)
+      // if a new file has been selected; otherwise preserve existing avatar.
+      const avatarUrl = selectedFile ? previewUrl : (user?.avatar || '');
 
-      if (selectedFile) {
-        try {
-          const formData = new FormData();
-          formData.append('image', selectedFile);
-          const { data: uploadData } = await uploadAPI.uploadImage(formData, 'profile');
-          avatarUrl = uploadData.data.url;
-        } catch (uploadErr) {
-          console.warn("Backend upload failed, using local Base64 storage fallback:", uploadErr);
-          avatarUrl = previewUrl; // Use base64 string
-        }
-      }
-
+      // Make the profile update request without avatar to prevent payload size errors
       const { data } = await authAPI.updateProfile({ 
         name: form.name, 
-        phone: form.phone,
-        avatar: avatarUrl
+        phone: form.phone
       });
-      dispatch(updateUser(data.data));
+      
+      // Dispatch update to Redux (which handles saving it to localStorage)
+      dispatch(updateUser({ ...data.data, avatar: avatarUrl }));
       toast.success('Profile updated successfully!');
       setSelectedFile(null);
     } catch (err) {
@@ -140,7 +133,7 @@ const ProfileContent = () => {
                 type="file"
                 ref={fileInputRef}
                 onChange={handleFileChange}
-                accept="image/png, image/jpeg, image/jpg"
+                accept="image/png, image/jpeg, image/jpg, image/webp"
                 className="hidden"
               />
               <div
