@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Home from './pages/Home';
@@ -19,66 +21,78 @@ import Contact from './pages/Contact';
 import Offers from './pages/Offers';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import RestaurantDashboard from './pages/restaurant/RestaurantDashboard';
+import { fetchMe } from './store/slices/authSlice';
 
-const App = () => (
-  <>
-    <Toaster
-      position="top-center"
-      toastOptions={{
-        duration: 3500,
-        style: {
-          borderRadius: '16px',
-          background: '#1e293b',
-          color: '#fff',
-          fontWeight: '600',
-          fontSize: '14px',
-          padding: '12px 24px',
-          boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)',
-        },
-        success: {
+const App = () => {
+  const dispatch = useDispatch();
+  const { token, user } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (token && !user) {
+      dispatch(fetchMe());
+    }
+  }, [token, user, dispatch]);
+
+  return (
+    <>
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          duration: 3500,
           style: {
-            background: '#10b981', // Emerald green
+            borderRadius: '16px',
+            background: '#1e293b',
             color: '#fff',
+            fontWeight: '600',
+            fontSize: '14px',
+            padding: '12px 24px',
+            boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)',
           },
-          iconTheme: {
-            primary: '#fff',
-            secondary: '#10b981',
+          success: {
+            style: {
+              background: '#10b981', // Emerald green
+              color: '#fff',
+            },
+            iconTheme: {
+              primary: '#fff',
+              secondary: '#10b981',
+            },
           },
-        },
-        error: {
-          style: {
-            background: '#ef4444', // Red
-            color: '#fff',
+          error: {
+            style: {
+              background: '#ef4444', // Red
+              color: '#fff',
+            },
+            iconTheme: {
+              primary: '#fff',
+              secondary: '#ef4444',
+            },
           },
-          iconTheme: {
-            primary: '#fff',
-            secondary: '#ef4444',
-          },
-        },
-      }}
-    />
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/reset-password/:token" element={<ResetPassword />} />
-      <Route path="/restaurants" element={<Restaurants />} />
-      <Route path="/restaurants/:id" element={<RestaurantDetail />} />
-      <Route path="/food/:id" element={<FoodDetail />} />
-      <Route path="/cart" element={<Cart />} />
-      <Route path="/checkout" element={<Checkout />} />
-      <Route path="/orders" element={<Orders />} />
-      <Route path="/orders/:id" element={<OrderTracking />} />
-      <Route path="/profile" element={<Profile />} />
-      <Route path="/wishlist" element={<Wishlist />} />
-      <Route path="/about" element={<About />} />
-      <Route path="/contact" element={<Contact />} />
-      <Route path="/offers" element={<Offers />} />
-      <Route path="/admin" element={<AdminDashboard />} />
-      <Route path="/restaurant/dashboard" element={<RestaurantDashboard />} />
-    </Routes>
-  </>
-);
+        }}
+      />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route path="/restaurants" element={<Restaurants />} />
+        <Route path="/restaurants/:id" element={<RestaurantDetail />} />
+        <Route path="/food/:id" element={<FoodDetail />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/orders" element={<Orders />} />
+        <Route path="/orders/:id" element={<OrderTracking />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/wishlist" element={<Wishlist />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/offers" element={<Offers />} />
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/restaurant/dashboard" element={<RestaurantDashboard />} />
+      </Routes>
+    </>
+  );
+};
 
 export default App;

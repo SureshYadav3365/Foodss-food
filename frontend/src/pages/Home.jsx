@@ -116,22 +116,24 @@ const Home = () => {
   const videoRef = useRef(null);
 
   useEffect(() => {
-    if (showVideoModal && videoRef.current) {
+    if (showVideoModal) {
       setVideoError(false);
       setAutoplayBlocked(false);
       setVideoPlaying(false);
 
-      const playPromise = videoRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            setVideoPlaying(true);
-          })
-          .catch((error) => {
-            console.log("Autoplay was prevented by browser:", error);
-            setAutoplayBlocked(true);
-          });
-      }
+      const timer = setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.play()
+            .then(() => {
+              setVideoPlaying(true);
+            })
+            .catch((error) => {
+              console.log("Autoplay was prevented by browser:", error);
+              setAutoplayBlocked(true);
+            });
+        }
+      }, 150);
+      return () => clearTimeout(timer);
     }
   }, [showVideoModal]);
 

@@ -5,6 +5,7 @@ import { IoPerson, IoMail, IoCall, IoLocation, IoAdd, IoTrash } from 'react-icon
 import Layout from '../components/layout/Layout';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
+import Loader from '../components/common/Loader';
 import ProtectedRoute from '../components/layout/ProtectedRoute';
 import { authAPI, uploadAPI } from '../api';
 import { updateUser } from '../store/slices/authSlice';
@@ -21,10 +22,12 @@ const ProfileContent = () => {
   const [selectedFile, setSelectedFile] = useState(null);
 
   useEffect(() => {
-    if (user?.avatar) {
-      setPreviewUrl(user.avatar);
+    if (user) {
+      setForm({ name: user.name || '', phone: user.phone || '', email: user.email || '' });
+      setAddresses(user.addresses || []);
+      setPreviewUrl(user.avatar || '');
     }
-  }, [user?.avatar]);
+  }, [user]);
 
   useEffect(() => {
     return () => {
@@ -105,6 +108,14 @@ const ProfileContent = () => {
   const removeAddress = (index) => {
     setAddresses(addresses.filter((_, i) => i !== index));
   };
+
+  if (!user) {
+    return (
+      <Layout>
+        <Loader fullScreen />
+      </Layout>
+    );
+  }
 
   return (
     <Layout>

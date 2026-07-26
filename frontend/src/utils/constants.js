@@ -16,7 +16,10 @@ export const PAYMENT_METHODS = [
 
 export const CUISINES = ['Italian', 'Indian', 'Chinese', 'American', 'Mexican', 'Thai', 'Japanese', 'Fast Food', 'Biryani', 'Pizza', 'Burger', 'Desserts'];
 
-export const formatPrice = (price) => `₹${price?.toFixed(0) || 0}`;
+export const formatPrice = (price) => {
+  const numericPrice = Number(price);
+  return `₹${isNaN(numericPrice) ? 0 : numericPrice.toFixed(0)}`;
+};
 
 export const getEffectivePrice = (food) => food?.discountPrice || food?.price || 0;
 

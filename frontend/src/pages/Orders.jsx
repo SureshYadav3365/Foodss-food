@@ -13,7 +13,16 @@ const OrdersContent = () => {
 
   useEffect(() => {
     orderAPI.getAll()
-      .then((res) => setOrders(res.data.data))
+      .then((res) => {
+        const data = res.data.data;
+        if (Array.isArray(data)) {
+          setOrders(data);
+        } else if (data && Array.isArray(data.orders)) {
+          setOrders(data.orders);
+        } else {
+          setOrders([]);
+        }
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);

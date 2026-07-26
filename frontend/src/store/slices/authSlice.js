@@ -88,8 +88,15 @@ const authSlice = createSlice({
         state.token = action.payload.token;
         state.isAuthenticated = true;
       })
-      .addCase(registerUser.rejected, (state, action) => { state.loading = false; state.error = action.payload; })
-      .addCase(fetchMe.fulfilled, (state, action) => { state.user = action.payload; });
+      .addCase(fetchMe.fulfilled, (state, action) => { state.user = action.payload; })
+      .addCase(fetchMe.rejected, (state) => {
+        state.user = null;
+        state.token = null;
+        state.isAuthenticated = false;
+        localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('user');
+      });
   },
 });
 

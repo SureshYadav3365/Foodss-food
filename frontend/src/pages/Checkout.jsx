@@ -237,26 +237,33 @@ const CheckoutContent = () => {
                 <IoBicycleOutline className="w-5 h-5 text-primary-500" /> Your Order is on its way!
               </h3>
               
-              {/* Order item details */}
-              <div className="flex items-center justify-between text-sm py-2 border-b border-gray-100 dark:border-dark-750">
-                <span className="text-dark-600 dark:text-dark-300 flex items-center gap-1.5 font-medium">
-                  <IoFastFoodOutline className="w-4 h-4 text-amber-500" /> Double Smash Burger x3
-                </span>
-                <span className="font-bold text-dark-900 dark:text-white">₹897</span>
+              <div className="max-h-40 overflow-y-auto space-y-2 mb-3">
+                {successOrder?.items?.map((item) => (
+                  <div key={item._id || item.food} className="flex items-center justify-between text-sm py-1.5 border-b border-gray-100 dark:border-dark-700 last:border-0">
+                    <span className="text-dark-600 dark:text-dark-300 flex items-center gap-1.5 font-medium">
+                      <IoFastFoodOutline className="w-4 h-4 text-amber-500" /> {item.name} x{item.quantity}
+                    </span>
+                    <span className="font-bold text-dark-900 dark:text-white">
+                      {formatPrice((Number(item.price) || 0) * item.quantity)}
+                    </span>
+                  </div>
+                ))}
               </div>
-              <div className="flex items-center justify-between text-xs py-2 border-b border-gray-100 dark:border-dark-750">
+              <div className="flex items-center justify-between text-xs py-2 border-b border-gray-100 dark:border-dark-700">
                 <span className="text-dark-400">Delivery Fee</span>
-                <span className="text-dark-600 dark:text-dark-400 font-semibold">₹40</span>
+                <span className="text-dark-600 dark:text-dark-400 font-semibold">
+                  {formatPrice(Number(successOrder?.deliveryFee) || 0)}
+                </span>
               </div>
               <div className="flex items-center justify-between text-base font-extrabold text-dark-900 dark:text-white pt-3">
                 <span>Total Paid</span>
-                <span>₹937</span>
+                <span>{formatPrice(Number(successOrder?.total) || 0)}</span>
               </div>
 
               {/* Delivery stats */}
-              <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between border-t border-gray-100 dark:border-dark-750 pt-3 text-xs gap-2">
+              <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between border-t border-gray-100 dark:border-dark-700 pt-3 text-xs gap-2">
                 <span className="text-dark-400 font-medium">
-                  Order ID: <span className="font-bold text-dark-700 dark:text-dark-300">#FH-98765</span>
+                  Order ID: <span className="font-bold text-dark-700 dark:text-dark-300">#{successOrder?._id?.substring(0, 8).toUpperCase() || 'N/A'}</span>
                 </span>
                 <span className="text-primary-600 dark:text-primary-400 font-bold">
                   ⏱ Est. Delivery: 25-30 mins

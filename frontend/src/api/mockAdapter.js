@@ -285,23 +285,51 @@ export const mockRequestAdapter = (config) => {
     // 8. Orders routes
     if (cleanPath === '/orders' && method.toLowerCase() === 'post') {
       if (!currentUser) return errorResponse('Not authenticated', 401);
+      
+      const orderItems = (data.items || []).map(item => {
+        const food = mockFoods.find(f => f._id === item.food);
+        return {
+          food: food?._id || item.food,
+          name: food?.name || 'Food Item',
+          price: food ? (food.discountPrice || food.price) : 0,
+          quantity: item.quantity,
+          image: food?.image || ''
+        };
+      });
+      
+      const subtotal = orderItems.reduce((acc, curr) => acc + curr.price * curr.quantity, 0);
+      const deliveryFee = 40;
+      const discount = 0; 
+      const total = subtotal + deliveryFee - discount;
+
+      const restId = orderItems[0]?.food ? (mockFoods.find(f => f._id === orderItems[0].food)?.restaurant || 'rest_1') : 'rest_1';
+      const matchedRestaurant = mockRestaurants.find(r => r._id === restId);
+      const restaurantObj = matchedRestaurant 
+        ? { _id: matchedRestaurant._id, name: matchedRestaurant.name, image: matchedRestaurant.image } 
+        : { _id: 'rest_1', name: 'Pizza Palace', image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400' };
+
       const order = {
         _id: 'ord_' + Date.now(),
         user: currentUser._id,
-        items: data.items,
-        address: data.address,
-        paymentMethod: data.paymentMethod || 'COD',
-        coupon: data.coupon || null,
-        discountAmount: data.discountAmount || 0,
-        deliveryFee: data.deliveryFee || 0,
-        totalAmount: data.totalAmount,
-        status: 'Placed',
+        restaurant: restaurantObj,
+        items: orderItems,
+        deliveryAddress: data.deliveryAddress || {},
+        paymentMethod: data.paymentMethod || 'cod',
+        subtotal,
+        deliveryFee,
+        discount,
+        total,
+        status: 'placed',
         createdAt: new Date().toISOString(),
-        paymentStatus: 'Pending'
+        paymentStatus: data.paymentMethod === 'cod' ? 'pending' : 'paid',
+        estimatedDelivery: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+        statusHistory: [
+          { status: 'placed', timestamp: new Date().toISOString(), note: 'Order placed successfully' }
+        ]
       };
       
       const orders = getStorageItem(`orders_${currentUser._id}`, []);
-      orders.push(order);
+      orders.unshift(order);
       setStorageItem(`orders_${currentUser._id}`, orders);
       
       const emptyCart = { items: [], totalAmount: 0 };
@@ -313,13 +341,26 @@ export const mockRequestAdapter = (config) => {
     if (cleanPath === '/orders' && method.toLowerCase() === 'get') {
       if (!currentUser) return errorResponse('Not authenticated', 401);
       const orders = getStorageItem(`orders_${currentUser._id}`, []);
-      return successResponse({ orders });
+      return successResponse(orders);
     }
 
     if (cleanPath.startsWith('/orders/')) {
       const idMatch = cleanPath.match(/^\/orders\/([a-zA-Z0-9_]+)$/);
       if (idMatch) {
         const id = idMatch[1];
+        if (id === 'stats') {
+          return successResponse({
+            totalOrders: 10,
+            totalRevenue: 3200,
+            stats: [
+              { _id: 'placed', count: 2, revenue: 600 },
+              { _id: 'confirmed', count: 1, revenue: 400 },
+              { _id: 'preparing', count: 2, revenue: 700 },
+              { _id: 'out_for_delivery', count: 1, revenue: 300 },
+              { _id: 'delivered', count: 4, revenue: 1200 }
+            ]
+          });
+        }
         const orders = getStorageItem(`orders_${currentUser?._id}`, []);
         const order = orders.find(o => o._id === id);
         if (!order) return errorResponse('Order not found', 404);

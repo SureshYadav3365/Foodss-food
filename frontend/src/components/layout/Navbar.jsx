@@ -115,7 +115,7 @@ const Navbar = () => {
                     <IoHeart className="w-5 h-5" />
                   </Link>
 
-                  <Link to="/cart" className="p-2.5 rounded-xl hover:bg-gray-50 dark:hover:bg-dark-800 text-dark-600 dark:text-dark-300 transition-colors relative" title="Cart">
+                  <Link to="/cart" className="hidden md:flex p-2.5 rounded-xl hover:bg-gray-50 dark:hover:bg-dark-800 text-dark-600 dark:text-dark-300 transition-colors relative" title="Cart">
                     <IoCart className="w-5 h-5" />
                     {cartCount > 0 && (
                       <span className="absolute top-1 right-1 bg-primary-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center border border-white dark:border-dark-900">
@@ -166,21 +166,25 @@ const Navbar = () => {
                             transition={{ duration: 0.15 }}
                             className="absolute right-0 mt-2 w-48 bg-white dark:bg-dark-800 rounded-2xl shadow-xl border border-gray-100 dark:border-dark-700/60 py-2 z-50 origin-top-right overflow-hidden"
                           >
-                            <Link
-                              to="/orders"
-                              onClick={() => setDropdownOpen(false)}
-                              className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-dark-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-dark-700/50 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                            <button
+                              onClick={() => {
+                                setDropdownOpen(false);
+                                navigate('/orders');
+                              }}
+                              className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-dark-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-dark-700/50 hover:text-primary-600 dark:hover:text-primary-400 transition-colors text-left"
                             >
                               <span>📦</span> My Orders
-                            </Link>
+                            </button>
                             
-                            <Link
-                              to="/profile"
-                              onClick={() => setDropdownOpen(false)}
-                              className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-dark-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-dark-700/50 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                            <button
+                              onClick={() => {
+                                setDropdownOpen(false);
+                                navigate('/profile');
+                              }}
+                              className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-dark-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-dark-700/50 hover:text-primary-600 dark:hover:text-primary-400 transition-colors text-left"
                             >
                               <span>👤</span> My Profile
-                            </Link>
+                            </button>
 
                             <div className="h-px bg-gray-100 dark:bg-dark-700 my-1" />
 
@@ -387,12 +391,18 @@ const Navbar = () => {
 
               {/* Navigation Links */}
               <div className="flex flex-col gap-4 flex-1 overflow-y-auto">
-                <Link to="/" onClick={() => setMenuOpen(false)} className="flex items-center gap-2.5 py-2.5 px-3 rounded-xl font-bold text-sm hover:bg-gray-50 dark:hover:bg-dark-800 transition-colors">
+                <button
+                  onClick={() => { setMenuOpen(false); navigate('/'); }}
+                  className="flex items-center gap-2.5 py-2.5 px-3 rounded-xl font-bold text-sm hover:bg-gray-50 dark:hover:bg-dark-800 transition-colors w-full text-left"
+                >
                   🏠 Home
-                </Link>
-                <Link to="/restaurants" onClick={() => setMenuOpen(false)} className="flex items-center gap-2.5 py-2.5 px-3 rounded-xl font-bold text-sm hover:bg-gray-50 dark:hover:bg-dark-800 transition-colors">
+                </button>
+                <button
+                  onClick={() => { setMenuOpen(false); navigate('/restaurants'); }}
+                  className="flex items-center gap-2.5 py-2.5 px-3 rounded-xl font-bold text-sm hover:bg-gray-50 dark:hover:bg-dark-800 transition-colors w-full text-left"
+                >
                   🍕 Restaurants
-                </Link>
+                </button>
 
                 <button
                   onClick={() => {
@@ -415,23 +425,35 @@ const Navbar = () => {
 
                 {isAuthenticated ? (
                   <>
-                    <Link to="/cart" onClick={() => setMenuOpen(false)} className="flex items-center justify-between py-2.5 px-3 rounded-xl font-bold text-sm hover:bg-gray-50 dark:hover:bg-dark-800 transition-colors">
+                    <button
+                      onClick={() => { setMenuOpen(false); navigate('/cart'); }}
+                      className="flex items-center justify-between py-2.5 px-3 rounded-xl font-bold text-sm hover:bg-gray-50 dark:hover:bg-dark-800 transition-colors w-full text-left"
+                    >
                       <span className="flex items-center gap-2.5">🛒 My Cart</span>
                       {cartCount > 0 && (
                         <span className="bg-primary-600 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">
                           {cartCount}
                         </span>
                       )}
-                    </Link>
-                    <Link to="/wishlist" onClick={() => setMenuOpen(false)} className="flex items-center gap-2.5 py-2.5 px-3 rounded-xl font-bold text-sm hover:bg-gray-50 dark:hover:bg-dark-800 transition-colors">
+                    </button>
+                    <button
+                      onClick={() => { setMenuOpen(false); navigate('/wishlist'); }}
+                      className="flex items-center gap-2.5 py-2.5 px-3 rounded-xl font-bold text-sm hover:bg-gray-50 dark:hover:bg-dark-800 transition-colors w-full text-left"
+                    >
                       ❤️ Wishlist
-                    </Link>
-                    <Link to="/orders" onClick={() => setMenuOpen(false)} className="flex items-center gap-2.5 py-2.5 px-3 rounded-xl font-bold text-sm hover:bg-gray-50 dark:hover:bg-dark-800 transition-colors">
+                    </button>
+                    <button
+                      onClick={() => { setMenuOpen(false); navigate('/orders'); }}
+                      className="flex items-center gap-2.5 py-2.5 px-3 rounded-xl font-bold text-sm hover:bg-gray-50 dark:hover:bg-dark-800 transition-colors w-full text-left"
+                    >
                       📦 My Orders
-                    </Link>
-                    <Link to="/profile" onClick={() => setMenuOpen(false)} className="flex items-center gap-2.5 py-2.5 px-3 rounded-xl font-bold text-sm hover:bg-gray-50 dark:hover:bg-dark-800 transition-colors">
+                    </button>
+                    <button
+                      onClick={() => { setMenuOpen(false); navigate('/profile'); }}
+                      className="flex items-center gap-2.5 py-2.5 px-3 rounded-xl font-bold text-sm hover:bg-gray-50 dark:hover:bg-dark-800 transition-colors w-full text-left"
+                    >
                       👤 My Profile
-                    </Link>
+                    </button>
                   </>
                 ) : null}
               </div>
@@ -440,7 +462,13 @@ const Navbar = () => {
               <div className="border-t border-gray-100 dark:border-dark-800 pt-6 mt-auto">
                 {isAuthenticated ? (
                   <div className="flex flex-col gap-3">
-                    <div className="flex items-center gap-3 px-3">
+                    <button
+                      onClick={() => {
+                        setMenuOpen(false);
+                        navigate('/profile');
+                      }}
+                      className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-gray-50 dark:hover:bg-dark-800 transition-colors w-full text-left"
+                    >
                       {user?.avatar ? (
                         <img
                           src={user.avatar}
@@ -452,11 +480,11 @@ const Navbar = () => {
                           {user?.name?.charAt(0).toUpperCase()}
                         </div>
                       )}
-                      <div>
+                      <div className="min-w-0 flex-1">
                         <p className="text-xs font-bold truncate max-w-[180px]">{user?.name}</p>
                         <p className="text-[10px] text-dark-400 truncate max-w-[180px]">{user?.email}</p>
                       </div>
-                    </div>
+                    </button>
                     <button
                       onClick={() => {
                         setMenuOpen(false);
