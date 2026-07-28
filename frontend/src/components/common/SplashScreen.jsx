@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
-// SVG Food Icons (styled with lower stroke widths for high-end look)
+// SVG Food Icons (extremely subtle backdrop details)
 const PizzaIcon = () => (
-  <svg className="w-10 h-10 text-yellow-500/80 fill-none stroke-current stroke-[1.5]" viewBox="0 0 24 24">
+  <svg className="w-10 h-10 text-yellow-500/60 fill-none stroke-current stroke-[1.5]" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" d="M12 2L2 22h20L12 2z" />
     <path strokeLinecap="round" strokeLinejoin="round" d="M2 22c2-2 18-2 20 0" />
     <circle cx="12" cy="11" r="1.5" className="fill-current" />
@@ -13,7 +13,7 @@ const PizzaIcon = () => (
 );
 
 const BurgerIcon = () => (
-  <svg className="w-10 h-10 text-amber-600/80 fill-none stroke-current stroke-[1.5]" viewBox="0 0 24 24">
+  <svg className="w-10 h-10 text-amber-600/60 fill-none stroke-current stroke-[1.5]" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" d="M3 12c0-4 4-7 9-7s9 3 9 7" />
     <path strokeLinecap="round" strokeLinejoin="round" d="M2 14c2-1 4 1 6-1s4 1 6-1 4 1 6-1" />
     <rect x="3" y="15" width="18" height="2" rx="0.5" className="fill-current" />
@@ -22,7 +22,7 @@ const BurgerIcon = () => (
 );
 
 const DrinkIcon = () => (
-  <svg className="w-10 h-10 text-rose-500/80 fill-none stroke-current stroke-[1.5]" viewBox="0 0 24 24">
+  <svg className="w-10 h-10 text-rose-500/60 fill-none stroke-current stroke-[1.5]" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" d="M6 8l1.5 12A2 2 0 009.5 22h5a2 2 0 002-1.8L18 8" />
     <path strokeLinecap="round" strokeLinejoin="round" d="M5 8h14M9 5h6" />
     <path strokeLinecap="round" strokeLinejoin="round" d="M12 5l2-3h2" />
@@ -30,7 +30,7 @@ const DrinkIcon = () => (
 );
 
 const DonutIcon = () => (
-  <svg className="w-10 h-10 text-pink-500/80 fill-none stroke-current stroke-[1.5]" viewBox="0 0 24 24">
+  <svg className="w-10 h-10 text-pink-500/60 fill-none stroke-current stroke-[1.5]" viewBox="0 0 24 24">
     <circle cx="12" cy="12" r="9" />
     <circle cx="12" cy="12" r="3" />
     <path d="M12 5v1M7 10l1 .5M17 10l-1 .5M10 16.5l.5 1M14 16.5l-.5 1" strokeLinecap="round" />
@@ -38,7 +38,7 @@ const DonutIcon = () => (
 );
 
 const ChefHatIcon = () => (
-  <svg className="w-10 h-10 text-emerald-500/80 fill-none stroke-current stroke-[1.5]" viewBox="0 0 24 24">
+  <svg className="w-10 h-10 text-emerald-500/60 fill-none stroke-current stroke-[1.5]" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18h12M6 18a4 4 0 01-1-7.87 5 5 0 019.8-1.5 5 5 0 013.2 9.37" />
     <path strokeLinecap="round" strokeLinejoin="round" d="M7 18v2a1 1 0 001 1h8a1 1 0 001-1v-2" />
   </svg>
@@ -129,23 +129,23 @@ const RoadSVG = ({ isMoving = true }) => (
 
 const SplashScreen = ({ onComplete }) => {
   const [progress, setProgress] = useState(1);
-  const [stage, setStage] = useState('logo'); // 'logo' (0-2s) | 'delivery' (2-7s) | 'complete' (7-8s)
+  const [stage, setStage] = useState('logo'); // 'logo' (0-0.5s) | 'delivery' (0.5s-2.0s) | 'complete' (2.0s-2.5s)
 
   useEffect(() => {
-    // Stage 1: Logo & initial state (0-2s)
+    // Stage 1: Initial state duration (0-0.5s)
     const logoTimer = setTimeout(() => {
       setStage('delivery');
-    }, 2000);
+    }, 500);
 
-    // Stage 3: Complete delivery (7s onwards)
+    // Stage 3: Complete delivery (2.0s onwards)
     const completeTimer = setTimeout(() => {
       setStage('complete');
-    }, 7000);
+    }, 2000);
 
-    // Fade out completely after 8s
+    // Fade out completely after 2.5s
     const endTimer = setTimeout(() => {
       onComplete();
-    }, 8000);
+    }, 2500);
 
     return () => {
       clearTimeout(logoTimer);
@@ -154,12 +154,12 @@ const SplashScreen = ({ onComplete }) => {
     };
   }, [onComplete]);
 
-  // Handle the count animation from 1 to 100 over 5 seconds (2s - 7s)
+  // Handle the count animation from 1 to 100 over 1.5 seconds (0.5s - 2.0s)
   useEffect(() => {
     if (stage !== 'delivery') return;
 
     const start = performance.now();
-    const duration = 5000; // 5000ms
+    const duration = 1500; // 1.5s
     let frameId;
 
     const update = (now) => {
@@ -201,8 +201,8 @@ const SplashScreen = ({ onComplete }) => {
   return (
     <motion.div
       initial={{ opacity: 1 }}
-      exit={{ opacity: 0, transition: { duration: 0.8, ease: 'easeInOut' } }}
-      className="fixed inset-0 z-[9999] flex flex-col justify-between items-center select-none overflow-hidden py-16 px-8 bg-gradient-to-tr from-[#020617] via-[#0b0f19] to-[#0f172a] text-white"
+      exit={{ opacity: 0, transition: { duration: 0.5, ease: 'easeInOut' } }}
+      className="fixed inset-0 z-[9999] flex items-center justify-center select-none overflow-hidden p-8 bg-gradient-to-tr from-[#020617] via-[#0b0f19] to-[#0f172a] text-white"
     >
       {/* Floating Speed Lines (extremely subtle wind) */}
       {stage === 'delivery' && (
@@ -239,38 +239,10 @@ const SplashScreen = ({ onComplete }) => {
         ))}
       </div>
 
-      {/* Header / Logo section with subtle glow */}
-      <div className="flex flex-col items-center mt-4 z-10">
-        <motion.div
-          initial={{ y: -30, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.9, type: 'spring', bounce: 0.2 }}
-          className="flex items-center gap-3"
-        >
-          {/* Elegant Logo SVG with subtle outer glow */}
-          <div className="w-12 h-12 bg-gradient-to-tr from-primary-600 to-orange-500 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/25 border border-primary-500/20 backdrop-blur-sm">
-            <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 000 7H6" />
-            </svg>
-          </div>
-          <span className="text-3xl md:text-4xl font-display font-extrabold tracking-tight bg-gradient-to-r from-primary-500 via-rose-500 to-orange-500 bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(244,63,94,0.15)]">
-            FoodHub
-          </span>
-        </motion.div>
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.6 }}
-          transition={{ delay: 0.6, duration: 0.8 }}
-          className="text-gray-400 font-semibold text-[10px] mt-2.5 tracking-[0.25em] uppercase"
-        >
-          Delivering Happiness
-        </motion.p>
-      </div>
-
       {/* Center Delivery Animation Zone */}
-      <div className="w-full max-w-lg flex flex-col justify-center items-center my-auto z-10 px-6">
+      <div className="w-full max-w-md flex flex-col justify-center items-center z-10 px-6">
         {/* The Path with Scooter */}
-        <div className="w-full relative h-28 flex items-end mb-6">
+        <div className="w-full relative h-24 flex items-end mb-6">
           {/* Scooter Position Container */}
           <div
             className="absolute bottom-1 transition-all duration-75 ease-linear"
@@ -325,11 +297,6 @@ const SplashScreen = ({ onComplete }) => {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Footer Branding info */}
-      <div className="text-center text-[10px] text-gray-600 font-semibold tracking-wider z-10">
-        PREMIUM FOOD EXPERIENCE &copy; {new Date().getFullYear()}
       </div>
     </motion.div>
   );
