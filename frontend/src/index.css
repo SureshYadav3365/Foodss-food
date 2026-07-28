@@ -88,3 +88,65 @@
     @apply dark:to-dark-900;
   }
 }
+
+/* Custom Splash Screen Animations */
+@keyframes scooter-vibe {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.animate-scooter-vibe {
+  animation: scooter-vibe 0.15s ease-in-out infinite;
+}
+
+@keyframes wheel-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.animate-wheel-spin {
+  animation: wheel-spin 0.4s linear infinite;
+}
+
+@keyframes speed-line {
+  0% { transform: translateX(120px); opacity: 0; }
+  10% { opacity: 0.6; }
+  90% { opacity: 0.6; }
+  100% { transform: translateX(-180px); opacity: 0; }
+}
+
+.animate-speed-line-1 {
+  animation: speed-line 0.8s linear infinite;
+}
+
+.animate-speed-line-2 {
+  animation: speed-line 0.8s linear infinite 0.25s;
+}
+
+.animate-speed-line-3 {
+  animation: speed-line 0.8s linear infinite 0.5s;
+}
+
+@keyframes road-move {
+  0% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -40; }
+}
+
+.animate-road-move {
+  animation: road-move 0.6s linear infinite;
+}
+
+@keyframes steam-rise {
+  0% { transform: translateY(0) scale(0.9); opacity: 0; }
+  50% { opacity: 0.5; }
+  100% { transform: translateY(-15px) scale(1.2); opacity: 0; }
+}
+
+.animate-steam-1 {
+  animation: steam-rise 1.5s ease-in-out infinite;
+}
+
+.animate-steam-2 {
+  animation: steam-rise 1.5s ease-in-out infinite 0.75s;
+}
+

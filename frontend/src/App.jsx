@@ -1,7 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import { AnimatePresence } from 'framer-motion';
+import SplashScreen from './components/common/SplashScreen';
 import Home from './pages/Home';
 import Login from './pages/auth/Login';
 import Signup from './pages/auth/Signup';
@@ -26,6 +28,7 @@ import { fetchMe } from './store/slices/authSlice';
 const App = () => {
   const dispatch = useDispatch();
   const { token, user } = useSelector((state) => state.auth);
+  const [showSplash, setShowSplash] = useState(true);
 
   useEffect(() => {
     if (token && !user) {
@@ -35,6 +38,12 @@ const App = () => {
 
   return (
     <>
+      <AnimatePresence mode="wait">
+        {showSplash && (
+          <SplashScreen onComplete={() => setShowSplash(false)} />
+        )}
+      </AnimatePresence>
+
       <Toaster
         position="top-center"
         toastOptions={{
